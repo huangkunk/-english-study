@@ -1,0 +1,25 @@
+{
+  "name": "专升本英语学习助手",
+  "short_name": "英语学习",
+  "description": "零基础成人高考专升本英语学习工具，包含音标、词汇、语法、练习和90天学习计划",
+  "start_url": "./英语学习助手.html",
+  "display": "standalone",
+  "background_color": "#F0F4F8",
+  "theme_color": "#4A90D9",
+  "orientation": "portrait",
+  "lang": "zh-CN",
+  "icons": [
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-180.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
