@@ -1,0 +1,1025 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>专升本英语学习助手</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="英语学习">
+<meta name="theme-color" content="#4A90D9">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="manifest" href="manifest.json">
+<style>
+:root{
+    --primary:#4A90D9;--primary-light:#6BA5E0;--primary-dark:#3A7BC8;
+    --success:#5CB85C;--warning:#FF9F40;--danger:#E74C3C;
+    --bg:#F0F4F8;--card:#FFFFFF;--text:#2C3E50;--text-light:#7F8C8D;
+    --border:#E0E6ED;--shadow:0 2px 8px rgba(0,0,0,.08);
+    --radius:12px;--nav-h:60px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-soothing:antialiased;max-width:600px;margin:0 auto;min-height:100vh;padding-bottom:calc(var(--nav-h) + 16px)}
+.app-header{background:linear-gradient(135deg,var(--primary),var(--primary-dark));color:#fff;padding:20px 16px 16px;text-align:center;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(74,144,217,.3)}
+.app-header h1{font-size:20px;font-weight:700;margin-bottom:4px}
+.app-header .subtitle{font-size:13px;opacity:.85}
+.progress-bar{height:6px;background:rgba(255,255,255,.25);border-radius:3px;margin-top:10px;overflow:hidden}
+.progress-fill{height:100%;background:#fff;border-radius:3px;transition:width .5s ease}
+.progress-text{font-size:11px;opacity:.8;margin-top:4px}
+.page{display:none;padding:16px;animation:fadeIn .3s ease}
+.page.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.section-title{font-size:17px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.section-title .emoji{font-size:20px}
+.card{background:var(--card);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow);margin-bottom:12px}
+.card h3{font-size:15px;font-weight:600;color:var(--primary-dark);margin-bottom:8px}
+.tip{font-size:13px;color:var(--text-light);line-height:1.8}
+/* Phonetics */
+.phonetic-tabs{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
+.phonetic-tab{padding:6px 14px;border-radius:20px;font-size:13px;border:2px solid var(--border);background:#fff;cursor:pointer;transition:all .2s}
+.phonetic-tab.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+.phonetic-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px}
+.phonetic-card{background:#fff;border-radius:10px;padding:12px;text-align:center;box-shadow:var(--shadow);cursor:pointer;transition:all .2s;border:2px solid transparent;position:relative}
+.phonetic-card:hover{transform:translateY(-2px)}
+.phonetic-card.learned{border-color:var(--success)}
+.phonetic-card.learned::after{content:'✓';position:absolute;top:4px;right:6px;color:var(--success);font-size:12px;font-weight:bold}
+.phonetic-symbol{font-size:28px;font-weight:700;color:var(--primary);margin-bottom:4px}
+.phonetic-example{font-size:14px;color:var(--text);font-weight:600}
+.phonetic-example-cn{font-size:12px;color:var(--text-light)}
+.phonetic-tip{font-size:11px;color:var(--warning);margin-top:4px;line-height:1.4}
+/* Vocabulary */
+.vocab-tabs{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
+.vocab-tab{padding:6px 14px;border-radius:20px;font-size:13px;border:2px solid var(--border);background:#fff;cursor:pointer;transition:all .2s}
+.vocab-tab.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+.vocab-list{display:flex;flex-direction:column;gap:8px}
+.vocab-item{background:#fff;border-radius:10px;padding:14px;box-shadow:var(--shadow);display:flex;align-items:center;gap:12px;transition:all .2s}
+.vocab-item.learned{border-left:3px solid var(--success)}
+.vocab-word{flex:1}
+.vocab-word .en{font-size:16px;font-weight:700;color:var(--text)}
+.vocab-word .phonetic{font-size:13px;color:var(--text-light);font-family:serif}
+.vocab-word .cn{font-size:14px;color:var(--text);margin-top:2px}
+.vocab-word .example{font-size:12px;color:var(--text-light);margin-top:4px;font-style:italic}
+.btn-speak{width:36px;height:36px;border-radius:50%;background:var(--primary);color:#fff;border:none;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s}
+.btn-speak:hover{background:var(--primary-dark);transform:scale(1.1)}
+.btn-speak:active{transform:scale(.95)}
+/* Grammar */
+.grammar-card{margin-bottom:14px}
+.grammar-card h3{font-size:15px;font-weight:600;color:var(--primary-dark);margin-bottom:6px;padding-bottom:6px;border-bottom:2px solid var(--bg)}
+.grammar-card .formula{background:var(--bg);border-radius:8px;padding:8px 12px;margin:6px 0;font-size:13px;color:var(--primary-dark)}
+.grammar-card .example{font-size:13px;color:var(--text);margin:4px 0;padding-left:12px}
+.grammar-card .example-cn{font-size:12px;color:var(--text-light);padding-left:12px}
+/* Quiz */
+.quiz-box{background:#fff;border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);margin-bottom:12px}
+.quiz-q{font-size:16px;font-weight:600;margin-bottom:16px;line-height:1.6}
+.quiz-q .phonetic-q{font-size:24px;color:var(--primary);font-family:serif}
+.quiz-opts{display:flex;flex-direction:column;gap:8px}
+.quiz-opt{padding:12px 16px;border:2px solid var(--border);border-radius:10px;font-size:15px;cursor:pointer;transition:all .2s;background:#fff;text-align:left}
+.quiz-opt:hover{border-color:var(--primary-light);background:var(--bg)}
+.quiz-opt.correct{border-color:var(--success);background:#E8F8E8;color:var(--success)}
+.quiz-opt.wrong{border-color:var(--danger);background:#FDECEA;color:var(--danger)}
+.quiz-opt:disabled{cursor:default}
+.quiz-result{text-align:center;padding:20px}
+.quiz-score{font-size:32px;font-weight:700;color:var(--primary);margin:8px 0}
+.quiz-score-label{font-size:14px;color:var(--text-light)}
+/* Plan */
+.plan-phase{margin-bottom:16px;border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow)}
+.plan-header{padding:12px 16px;font-weight:700;font-size:15px;color:#fff}
+.plan-phase1 .plan-header{background:linear-gradient(135deg,#5CB85C,#4CAF50)}
+.plan-phase2 .plan-header{background:linear-gradient(135deg,#FF9F40,#F0AD4E)}
+.plan-phase3 .plan-header{background:linear-gradient(135deg,#E74C3C,#C0392B)}
+.plan-body{background:#fff;padding:12px 16px}
+.plan-body p{font-size:13px;color:var(--text);margin-bottom:6px}
+.plan-body .day-tag{display:inline-block;background:var(--bg);color:var(--text-light);border-radius:4px;padding:1px 6px;font-size:11px;margin-right:4px}
+/* Bottom Nav */
+.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:600px;background:#fff;border-top:1px solid var(--border);display:flex;height:var(--nav-h);z-index:100;box-shadow:0 -2px 12px rgba(0,0,0,.06)}
+.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;color:var(--text-light);cursor:pointer;transition:color .2s;font-size:11px;border:none;background:none}
+.nav-item.active{color:var(--primary)}
+.nav-item .icon{font-size:20px}
+/* Buttons */
+.btn{display:inline-block;padding:10px 24px;border-radius:8px;border:none;font-size:15px;font-weight:600;cursor:pointer;transition:all .2s}
+.btn-primary{background:var(--primary);color:#fff}
+.btn-primary:hover{background:var(--primary-dark)}
+.btn-success{background:var(--success);color:#fff}
+.btn-outline{background:#fff;color:var(--primary);border:2px solid var(--primary)}
+.btn-outline:hover{background:var(--bg)}
+/* Misc */
+.empty{text-align:center;padding:40px 20px;color:var(--text-light);font-size:14px}
+.badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600}
+.badge-vowel{background:#E3F2FD;color:#1976D2}
+.badge-consonant{background:#FFF3E0;color:#E65100}
+.flashcard{background:linear-gradient(135deg,var(--primary),var(--primary-dark));color:#fff;border-radius:16px;padding:32px 20px;text-align:center;min-height:200px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 16px rgba(74,144,217,.3)}
+.flashcard .fc-word{font-size:28px;font-weight:700;margin-bottom:8px}
+.flashcard .fc-phonetic{font-size:16px;opacity:.85;font-family:serif}
+.flashcard .fc-meaning{font-size:18px;margin-top:12px;display:none}
+.flashcard.flipped .fc-meaning{display:block}
+.flashcard.flipped .fc-phonetic{display:none}
+.fc-controls{display:flex;gap:10px;justify-content:center;margin-top:16px}
+.fc-controls .btn{padding:8px 16px;font-size:14px}
+.banner{background:linear-gradient(135deg,#FF9F40,#F0AD4E);color:#fff;border-radius:var(--radius);padding:16px;margin-bottom:14px;text-align:center}
+.banner h3{font-size:16px;margin-bottom:4px}
+.banner p{font-size:13px;opacity:.9}
+.streak{display:inline-flex;align-items:center;gap:4px;background:rgba(255,255,255,.2);border-radius:12px;padding:2px 10px;font-size:12px}
+</style>
+</head>
+<body>
+
+<div class="app-header">
+<h1>专升本英语学习助手</h1>
+<div class="subtitle">10月成人高考·零基础冲刺</div>
+<div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+<div class="progress-text" id="progressText">已学习 0 项 | 0%</div>
+</div>
+
+<!-- 首页 -->
+<div class="page active" id="page-home">
+<div class="banner">
+<h3>距离考试约90天</h3>
+<p>每天坚持1小时，零基础也能过线！</p>
+<div class="streak" id="streakBadge">连续学习 0 天</div>
+</div>
+
+<div class="card">
+<h3>考试分值分布</h3>
+<p class="tip">
+阅读理解 <b>60分</b>（40%）— 最大得分点<br>
+写作 <b>40分</b>（27%）— 背模板可拿分<br>
+完形填空 <b>30分</b>（20%）— 考词汇语法<br>
+词汇语法 <b>15分</b>（10%）— 语法选择<br>
+语音知识 <b>5分</b>（3%）— 音标辨析<br>
+<span style="color:var(--danger);font-weight:600">满分150分，120分钟</span>
+</p>
+</div>
+
+<div class="card">
+<h3>90天学习路线</h3>
+<p class="tip">
+<b>第一阶段（1-30天）基础筑基</b><br>
+学完48个音标 + 100核心词 + 5个基础语法点<br><br>
+<b>第二阶段（31-60天）强化提升</b><br>
+扩展词汇 + 语法巩固 + 开始阅读训练<br><br>
+<b>第三阶段（61-90天）冲刺备考</b><br>
+真题模拟 + 写作模板 + 错题复习
+</p>
+</div>
+
+<div class="card">
+<h3>今日任务</h3>
+<p class="tip" id="todayTask">点击下方「学习计划」查看详细安排</p>
+</div>
+
+<div class="card">
+<h3>备考策略建议</h3>
+<p class="tip">
+1. 语音题5分 — 用本工具学音标，基本能拿3-4分<br>
+2. 词汇语法15分 — 刷高频语法点，可拿8-10分<br>
+3. 完形填空30分 — 词汇量+语法，能拿15-20分<br>
+4. 阅读理解60分 — 词汇量是关键，先读懂题目和选项<br>
+5. 写作40分 — 背2-3个万能模板，套用即可拿20+分<br><br>
+<span style="color:var(--primary);font-weight:600">目标：90-100分（过线）</span>
+</p>
+</div>
+</div>
+
+<!-- 音标学习 -->
+<div class="page" id="page-phonetics">
+<div class="section-title"><span class="emoji">🔊</span> 音标学习</div>
+<p class="tip" style="margin-bottom:12px">点击卡片听发音，学会一个点✓标记。先学元音再学辅音。</p>
+
+<div class="phonetic-tabs" id="phoneticTabs">
+<div class="phonetic-tab active" data-cat="all">全部 48</div>
+<div class="phonetic-tab" data-cat="mono">单元音 12</div>
+<div class="phonetic-tab" data-cat="di">双元音 8</div>
+<div class="phonetic-tab" data-cat="voiceless">清辅音 11</div>
+<div class="phonetic-tab" data-cat="voiced">浊辅音 17</div>
+</div>
+
+<div class="phonetic-grid" id="phoneticGrid"></div>
+
+<div class="card" style="margin-top:14px">
+<h3>学习技巧</h3>
+<p class="tip">
+1. 每天学3-4个，15天学完全部48个<br>
+2. 先听标准发音，再模仿跟读3遍<br>
+3. 注意单元音长短区别（如 /iː/ vs /ɪ/）<br>
+4. 清辅音声带不振动，浊辅音声带振动<br>
+5. 可以用手摸喉咙感受声带振动
+</p>
+</div>
+</div>
+
+<!-- 词汇学习 -->
+<div class="page" id="page-vocab">
+<div class="section-title"><span class="emoji">📖</span> 核心词汇</div>
+<p class="tip" style="margin-bottom:12px">点击喇叭听发音，学会一个点✓标记。每天10个词，30天掌握100词。</p>
+
+<div class="vocab-tabs" id="vocabTabs">
+<div class="vocab-tab active" data-level="1">基础30词</div>
+<div class="vocab-tab" data-level="2">进阶30词</div>
+<div class="vocab-tab" data-level="3">考试高频40词</div>
+</div>
+
+<div class="vocab-list" id="vocabList"></div>
+</div>
+
+<!-- 语法学习 -->
+<div class="page" id="page-grammar">
+<div class="section-title"><span class="emoji">📝</span> 基础语法</div>
+<p class="tip" style="margin-bottom:12px">先看公式，再看例句，最后理解用法。每个语法点都配有例句。</p>
+<div id="grammarContent"></div>
+</div>
+
+<!-- 每日练习 -->
+<div class="page" id="page-quiz">
+<div class="section-title"><span class="emoji">✏️</span> 每日练习</div>
+<p class="tip" style="margin-bottom:12px">每天做10题，检验学习成果。</p>
+
+<div class="quiz-box" id="quizBox">
+<div style="text-align:center;padding:20px">
+<p class="tip">选择题型开始练习</p>
+<div style="display:flex;gap:10px;justify-content:center;margin-top:12px;flex-wrap:wrap">
+<button class="btn btn-primary" onclick="startQuiz('phonetics')">音标辨析</button>
+<button class="btn btn-primary" onclick="startQuiz('vocab')">词汇选择</button>
+<button class="btn btn-primary" onclick="startQuiz('grammar')">语法练习</button>
+<button class="btn btn-outline" onclick="startQuiz('mixed')">综合混合</button>
+</div>
+</div>
+</div>
+
+<div class="card" id="quizStats" style="display:none">
+<h3>练习记录</h3>
+<p class="tip" id="quizStatsText">暂无记录</p>
+</div>
+</div>
+
+<!-- 学习计划 -->
+<div class="page" id="page-plan">
+<div class="section-title"><span class="emoji">📅</span> 90天学习计划</div>
+
+<div class="plan-phase plan-phase1">
+<div class="plan-header">第一阶段：基础筑基（第1-30天）</div>
+<div class="plan-body">
+<p><span class="day-tag">第1-15天</span><b>音标</b>：每天3-4个，15天学完48个音标。用本工具「音标学习」页面，听发音+模仿跟读</p>
+<p><span class="day-tag">第1-10天</span><b>词汇L1</b>：每天3个基础词，10天学完30词</p>
+<p><span class="day-tag">第11-20天</span><b>词汇L2</b>：每天3个进阶词，10天学完30词</p>
+<p><span class="day-tag">第5-10天</span><b>语法</b>：be动词、人称代词</p>
+<p><span class="day-tag">第11-20天</span><b>语法</b>：冠词、名词复数、一般现在时</p>
+<p><span class="day-tag">第21-30天</span><b>复习</b>：音标总复习 + 30天词汇复习 + 语法练习</p>
+<p style="color:var(--success);font-weight:600;margin-top:8px">目标：掌握48音标 + 60词 + 5个语法点</p>
+</div>
+</div>
+
+<div class="plan-phase plan-phase2">
+<div class="plan-header">第二阶段：强化提升（第31-60天）</div>
+<div class="plan-body">
+<p><span class="day-tag">第31-40天</span><b>词汇L3</b>：每天4个考试高频词</p>
+<p><span class="day-tag">第31-40天</span><b>语法</b>：一般过去时、一般将来时、现在进行时</p>
+<p><span class="day-tag">第41-50天</span><b>语法</b>：There be句型、五大基本句型</p>
+<p><span class="day-tag">第41-55天</span><b>阅读</b>：每天1篇短文阅读（用「每日英语阅读」APP）</p>
+<p><span class="day-tag">第51-60天</span><b>综合</b>：词汇总复习 + 每天做10道练习题</p>
+<p style="color:var(--warning);font-weight:600;margin-top:8px">目标：词汇量达100+ + 能做简单阅读 + 掌握全部语法点</p>
+</div>
+</div>
+
+<div class="plan-phase plan-phase3">
+<div class="plan-header">第三阶段：冲刺备考（第61-90天）</div>
+<div class="plan-body">
+<p><span class="day-tag">第61-75天</span><b>真题</b>：隔天做1套真题或模拟题（用「自考聚题库」APP）</p>
+<p><span class="day-tag">第61-75天</span><b>写作</b>：背2-3个写作万能模板（书信+通知+议论文）</p>
+<p><span class="day-tag">第76-85天</span><b>错题</b>：回顾所有错题，薄弱环节重点突破</p>
+<p><span class="day-tag">第86-90天</span><b>冲刺</b>：每天1套模拟题 + 模板默写 + 词汇快速过</p>
+<p style="color:var(--danger);font-weight:600;margin-top:8px">目标：模拟分数稳定90+ · 模板熟练默写</p>
+</div>
+</div>
+
+<div class="card">
+<h3>每日时间分配（60分钟）</h3>
+<p class="tip">
+<b>阶段一</b>：音标15分 + 词汇15分 + 语法15分 + 复习15分<br>
+<b>阶段二</b>：词汇15分 + 语法15分 + 阅读20分 + 练习10分<br>
+<b>阶段三</b>：真题40分 + 写作10分 + 错题复习10分
+</p>
+</div>
+</div>
+
+<!-- 底部导航 -->
+<nav class="bottom-nav">
+<button class="nav-item active" onclick="goPage('home',this)"><span class="icon">🏠</span>首页</button>
+<button class="nav-item" onclick="goPage('phonetics',this)"><span class="icon">🔊</span>音标</button>
+<button class="nav-item" onclick="goPage('vocab',this)"><span class="icon">📖</span>词汇</button>
+<button class="nav-item" onclick="goPage('grammar',this)"><span class="icon">📝</span>语法</button>
+<button class="nav-item" onclick="goPage('quiz',this)"><span class="icon">✏️</span>练习</button>
+<button class="nav-item" onclick="goPage('plan',this)"><span class="icon">📅</span>计划</button>
+</nav>
+
+<script>
+// ========== 数据 ==========
+const PHONETICS=[
+// 单元音 12
+{sym:"/iː/",cat:"mono",word:"sheep",cn:"羊",tip:"嘴角向两边拉，微笑状，发长\"衣\""},
+{sym:"/ɪ/",cat:"mono",word:"ship",cn:"船",tip:"短促的\"衣\"，口腔放松"},
+{sym:"/e/",cat:"mono",word:"bed",cn:"床",tip:"嘴型中等，发短\"诶\""},
+{sym:"/æ/",cat:"mono",word:"cat",cn:"猫",tip:"嘴张大，介于\"啊\"和\"诶\""},
+{sym:"/ɜː/",cat:"mono",word:"bird",cn:"鸟",tip:"嘴唇微张，发长\"饿\""},
+{sym:"/ə/",cat:"mono",word:"about",cn:"关于",tip:"最放松的音，轻声\"呃\""},
+{sym:"/ɑː/",cat:"mono",word:"car",cn:"汽车",tip:"嘴张大，发长\"啊\""},
+{sym:"/ʌ/",cat:"mono",word:"cup",cn:"杯子",tip:"短促的\"啊\"，口腔打开"},
+{sym:"/ɔː/",cat:"mono",word:"door",cn:"门",tip:"嘴唇收圆，发长\"奥\""},
+{sym:"/ɒ/",cat:"mono",word:"hot",cn:"热",tip:"短促的\"奥\"，嘴唇收圆"},
+{sym:"/uː/",cat:"mono",word:"food",cn:"食物",tip:"嘴唇收圆，发长\"乌\""},
+{sym:"/ʊ/",cat:"mono",word:"book",cn:"书",tip:"短促的\"乌\"，嘴唇微收"},
+// 双元音 8
+{sym:"/eɪ/",cat:"di",word:"day",cn:"天",tip:"从\"诶\"滑向\"衣\""},
+{sym:"/aɪ/",cat:"di",word:"my",cn:"我的",tip:"从\"啊\"滑向\"衣\""},
+{sym:"/ɔɪ/",cat:"di",word:"boy",cn:"男孩",tip:"从\"奥\"滑向\"衣\""},
+{sym:"/əʊ/",cat:"di",word:"go",cn:"去",tip:"从\"呃\"滑向\"乌\""},
+{sym:"/aʊ/",cat:"di",word:"now",cn:"现在",tip:"从\"啊\"滑向\"乌\""},
+{sym:"/ɪə/",cat:"di",word:"ear",cn:"耳朵",tip:"从\"衣\"滑向\"呃\""},
+{sym:"/eə/",cat:"di",word:"hair",cn:"头发",tip:"从\"诶\"滑向\"呃\""},
+{sym:"/ʊə/",cat:"di",word:"tour",cn:"旅游",tip:"从\"乌\"滑向\"呃\""},
+// 清辅音 11
+{sym:"/p/",cat:"voiceless",word:"pen",cn:"笔",tip:"双唇紧闭，气流冲出，声带不振动"},
+{sym:"/t/",cat:"voiceless",word:"ten",cn:"十",tip:"舌尖抵上齿龈，气流冲出，不振动"},
+{sym:"/k/",cat:"voiceless",word:"key",cn:"钥匙",tip:"舌后部抵软腭，气流冲出，不振动"},
+{sym:"/f/",cat:"voiceless",word:"five",cn:"五",tip:"上齿咬下唇，气流摩擦，不振动"},
+{sym:"/θ/",cat:"voiceless",word:"think",cn:"想",tip:"舌尖伸出齿间，气流通过，不振动"},
+{sym:"/s/",cat:"voiceless",word:"sun",cn:"太阳",tip:"舌尖抵上齿龈，气流摩擦，不振动"},
+{sym:"/ʃ/",cat:"voiceless",word:"she",cn:"她",tip:"舌面抬近硬腭，气流摩擦，不振动"},
+{sym:"/tʃ/",cat:"voiceless",word:"chair",cn:"椅子",tip:"先/t/再/ʃ/，气流冲出，不振动"},
+{sym:"/tr/",cat:"voiceless",word:"tree",cn:"树",tip:"先/t/再/r/，不振动"},
+{sym:"/ts/",cat:"voiceless",word:"cats",cn:"猫(复)",tip:"先/t/再/s/，不振动"},
+{sym:"/h/",cat:"voiceless",word:"he",cn:"他",tip:"气流从声门通过，不振动"},
+// 浊辅音 17
+{sym:"/b/",cat:"voiced",word:"book",cn:"书",tip:"双唇紧闭，气流冲出，声带振动"},
+{sym:"/d/",cat:"voiced",word:"dog",cn:"狗",tip:"舌尖抵上齿龈，气流冲出，振动"},
+{sym:"/g/",cat:"voiced",word:"go",cn:"去",tip:"舌后部抵软腭，气流冲出，振动"},
+{sym:"/v/",cat:"voiced",word:"very",cn:"非常",tip:"上齿咬下唇，气流摩擦，振动"},
+{sym:"/ð/",cat:"voiced",word:"this",cn:"这个",tip:"舌尖伸出齿间，气流通过，振动"},
+{sym:"/z/",cat:"voiced",word:"zoo",cn:"动物园",tip:"舌尖抵上齿龈，气流摩擦，振动"},
+{sym:"/ʒ/",cat:"voiced",word:"usually",cn:"通常",tip:"舌面抬近硬腭，气流摩擦，振动"},
+{sym:"/dʒ/",cat:"voiced",word:"job",cn:"工作",tip:"先/d/再/ʒ/，气流冲出，振动"},
+{sym:"/dr/",cat:"voiced",word:"drink",cn:"喝",tip:"先/d/再/r/，振动"},
+{sym:"/dz/",cat:"voiced",word:"beds",cn:"床(复)",tip:"先/d/再/z/，振动"},
+{sym:"/m/",cat:"voiced",word:"man",cn:"男人",tip:"双唇紧闭，气流从鼻腔出，振动"},
+{sym:"/n/",cat:"voiced",word:"no",cn:"不",tip:"舌尖抵上齿龈，气流从鼻腔出，振动"},
+{sym:"/ŋ/",cat:"voiced",word:"sing",cn:"唱歌",tip:"舌后部抵软腭，气流从鼻腔出，振动"},
+{sym:"/l/",cat:"voiced",word:"look",cn:"看",tip:"舌尖抵上齿龈，气流从舌两侧出，振动"},
+{sym:"/r/",cat:"voiced",word:"red",cn:"红色",tip:"舌尖向上卷起，气流通过，振动"},
+{sym:"/j/",cat:"voiced",word:"yes",cn:"是",tip:"舌面抬近硬腭，气流通过，振动"},
+{sym:"/w/",cat:"voiced",word:"we",cn:"我们",tip:"双唇收圆，气流通过，振动"}
+];
+
+const VOCAB=[
+// Level 1 基础30词
+{w:"hello",ph:"/həˈləʊ/",cn:"你好",ex:"Hello, how are you?",excn:"你好，你好吗？",lv:1},
+{w:"good",ph:"/ɡʊd/",cn:"好的",ex:"This is a good book.",excn:"这是一本好书。",lv:1},
+{w:"yes",ph:"/jes/",cn:"是",ex:"Yes, I can do it.",excn:"是的，我能做到。",lv:1},
+{w:"no",ph:"/nəʊ/",cn:"不",ex:"No, thank you.",excn:"不，谢谢。",lv:1},
+{w:"please",ph:"/pliːz/",cn:"请",ex:"Please sit down.",excn:"请坐。",lv:1},
+{w:"thank",ph:"/θæŋk/",cn:"感谢",ex:"Thank you very much.",excn:"非常感谢你。",lv:1},
+{w:"sorry",ph:"/ˈsɒri/",cn:"对不起",ex:"I'm sorry, I'm late.",excn:"对不起，我迟到了。",lv:1},
+{w:"time",ph:"/taɪm/",cn:"时间",ex:"What time is it?",excn:"几点了？",lv:1},
+{w:"day",ph:"/deɪ/",cn:"天/日",ex:"Have a nice day!",excn:"祝你有美好的一天！",lv:1},
+{w:"year",ph:"/jɪə/",cn:"年",ex:"I'm 25 years old.",excn:"我25岁。",lv:1},
+{w:"man",ph:"/mæn/",cn:"男人",ex:"He is a good man.",excn:"他是个好人。",lv:1},
+{w:"woman",ph:"/ˈwʊmən/",cn:"女人",ex:"She is a kind woman.",excn:"她是个善良的女人。",lv:1},
+{w:"water",ph:"/ˈwɔːtə/",cn:"水",ex:"I want some water.",excn:"我想要些水。",lv:1},
+{w:"food",ph:"/fuːd/",cn:"食物",ex:"The food is delicious.",excn:"食物很美味。",lv:1},
+{w:"book",ph:"/bʊk/",cn:"书",ex:"I like reading books.",excn:"我喜欢读书。",lv:1},
+{w:"work",ph:"/wɜːk/",cn:"工作",ex:"I go to work by bus.",excn:"我坐公交上班。",lv:1},
+{w:"home",ph:"/həʊm/",cn:"家",ex:"I go home at six.",excn:"我六点回家。",lv:1},
+{w:"school",ph:"/skuːl/",cn:"学校",ex:"My school is big.",excn:"我的学校很大。",lv:1},
+{w:"love",ph:"/lʌv/",cn:"爱",ex:"I love my family.",excn:"我爱我的家人。",lv:1},
+{w:"help",ph:"/help/",cn:"帮助",ex:"Can you help me?",excn:"你能帮我吗？",lv:1},
+{w:"come",ph:"/kʌm/",cn:"来",ex:"Please come here.",excn:"请过来。",lv:1},
+{w:"go",ph:"/ɡəʊ/",cn:"去",ex:"Let's go to the park.",excn:"我们去公园吧。",lv:1},
+{w:"see",ph:"/siː/",cn:"看见",ex:"I can see you.",excn:"我能看见你。",lv:1},
+{w:"want",ph:"/wɒnt/",cn:"想要",ex:"I want to learn English.",excn:"我想学英语。",lv:1},
+{w:"make",ph:"/meɪk/",cn:"制作/使",ex:"Let's make a plan.",excn:"我们做个计划。",lv:1},
+{w:"know",ph:"/nəʊ/",cn:"知道",ex:"I know the answer.",excn:"我知道答案。",lv:1},
+{w:"think",ph:"/θɪŋk/",cn:"思考",ex:"I think you are right.",excn:"我认为你对。",lv:1},
+{w:"name",ph:"/neɪm/",cn:"名字",ex:"My name is Li Ming.",excn:"我叫李明。",lv:1},
+{w:"friend",ph:"/frend/",cn:"朋友",ex:"He is my best friend.",excn:"他是我最好的朋友。",lv:1},
+{w:"family",ph:"/ˈfæməli/",cn:"家庭",ex:"My family is happy.",excn:"我的家庭很幸福。",lv:1},
+// Level 2 进阶30词
+{w:"study",ph:"/ˈstʌdi/",cn:"学习",ex:"I study English every day.",excn:"我每天学英语。",lv:2},
+{w:"read",ph:"/riːd/",cn:"阅读",ex:"I read a book every night.",excn:"我每晚读一本书。",lv:2},
+{w:"write",ph:"/raɪt/",cn:"写",ex:"I can write in English.",excn:"我能用英语写字。",lv:2},
+{w:"learn",ph:"/lɜːn/",cn:"学",ex:"I want to learn more.",excn:"我想学更多。",lv:2},
+{w:"teach",ph:"/tiːtʃ/",cn:"教",ex:"She teaches English.",excn:"她教英语。",lv:2},
+{w:"question",ph:"/ˈkwestʃən/",cn:"问题",ex:"Can I ask a question?",excn:"我能问个问题吗？",lv:2},
+{w:"answer",ph:"/ˈɑːnsə/",cn:"回答",ex:"Do you know the answer?",excn:"你知道答案吗？",lv:2},
+{w:"important",ph:"/ɪmˈpɔːtənt/",cn:"重要的",ex:"English is very important.",excn:"英语很重要。",lv:2},
+{w:"different",ph:"/ˈdɪfərənt/",cn:"不同的",ex:"They are different.",excn:"它们是不同的。",lv:2},
+{w:"because",ph:"/bɪˈkɒz/",cn:"因为",ex:"I'm happy because I passed.",excn:"我很高兴因为我通过了。",lv:2},
+{w:"before",ph:"/bɪˈfɔː/",cn:"在...之前",ex:"Wash hands before eating.",excn:"饭前洗手。",lv:2},
+{w:"after",ph:"/ˈɑːftə/",cn:"在...之后",ex:"After school, I go home.",excn:"放学后我回家。",lv:2},
+{w:"between",ph:"/bɪˈtwiːn/",cn:"在...之间",ex:"The book is between A and B.",excn:"书在A和B之间。",lv:2},
+{w:"through",ph:"/θruː/",cn:"通过/穿过",ex:"We walked through the park.",excn:"我们穿过了公园。",lv:2},
+{w:"should",ph:"/ʃʊd/",cn:"应该",ex:"You should study hard.",excn:"你应该努力学习。",lv:2},
+{w:"could",ph:"/kʊd/",cn:"可以/能",ex:"Could you help me?",excn:"你能帮我吗？",lv:2},
+{w:"would",ph:"/wʊd/",cn:"将会/愿意",ex:"I would like some tea.",excn:"我想要些茶。",lv:2},
+{w:"must",ph:"/mʌst/",cn:"必须",ex:"You must finish it today.",excn:"你必须今天完成。",lv:2},
+{w:"need",ph:"/niːd/",cn:"需要",ex:"I need your help.",excn:"我需要你的帮助。",lv:2},
+{w:"feel",ph:"/fiːl/",cn:"感觉",ex:"I feel happy today.",excn:"我今天感觉开心。",lv:2},
+{w:"become",ph:"/bɪˈkʌm/",cn:"变成",ex:"I want to become a teacher.",excn:"我想成为一名教师。",lv:2},
+{w:"believe",ph:"/bɪˈliːv/",cn:"相信",ex:"I believe you can do it.",excn:"我相信你能做到。",lv:2},
+{w:"remember",ph:"/rɪˈmembə/",cn:"记得",ex:"Remember to lock the door.",excn:"记得锁门。",lv:2},
+{w:"understand",ph:"/ˌʌndəˈstænd/",cn:"理解",ex:"I understand now.",excn:"我现在理解了。",lv:2},
+{w:"interesting",ph:"/ˈɪntrəstɪŋ/",cn:"有趣的",ex:"This book is interesting.",excn:"这本书很有趣。",lv:2},
+{w:"difficult",ph:"/ˈdɪfɪkəlt/",cn:"困难的",ex:"English is not difficult.",excn:"英语并不难。",lv:2},
+{w:"easy",ph:"/ˈiːzi/",cn:"容易的",ex:"It's easy to learn.",excn:"这很容易学。",lv:2},
+{w:"correct",ph:"/kəˈrekt/",cn:"正确的",ex:"Your answer is correct.",excn:"你的答案是正确的。",lv:2},
+{w:"wrong",ph:"/rɒŋ/",cn:"错误的",ex:"That is wrong.",excn:"那是错的。",lv:2},
+{w:"hope",ph:"/həʊp/",cn:"希望",ex:"I hope to pass the exam.",excn:"我希望通过考试。",lv:2},
+// Level 3 考试高频40词
+{w:"ability",ph:"/əˈbɪləti/",cn:"能力",ex:"He has the ability to lead.",excn:"他有领导能力。",lv:3},
+{w:"accept",ph:"/əkˈsept/",cn:"接受",ex:"I accept your invitation.",excn:"我接受你的邀请。",lv:3},
+{w:"achieve",ph:"/əˈtʃiːv/",cn:"实现/达到",ex:"You can achieve your goal.",excn:"你能实现你的目标。",lv:3},
+{w:"activity",ph:"/ækˈtɪvəti/",cn:"活动",ex:"We have many activities.",excn:"我们有很多活动。",lv:3},
+{w:"advice",ph:"/ədˈvaɪs/",cn:"建议",ex:"Can you give me some advice?",excn:"你能给我一些建议吗？",lv:3},
+{w:"although",ph:"/ɔːlˈðəʊ/",cn:"虽然",ex:"Although it's hard, I won't give up.",excn:"虽然很难，我不会放弃。",lv:3},
+{w:"attention",ph:"/əˈtenʃən/",cn:"注意力",ex:"Pay attention to the teacher.",excn:"注意听老师讲。",lv:3},
+{w:"available",ph:"/əˈveɪləbl/",cn:"可获得的",ex:"The book is available online.",excn:"这本书网上有。",lv:3},
+{w:"benefit",ph:"/ˈbenɪfɪt/",cn:"好处/利益",ex:"Reading has many benefits.",excn:"阅读有很多好处。",lv:3},
+{w:"cause",ph:"/kɔːz/",cn:"导致/原因",ex:"What caused the problem?",excn:"什么导致了这个问题？",lv:3},
+{w:"common",ph:"/ˈkɒmən/",cn:"常见的",ex:"It's a common mistake.",excn:"这是个常见的错误。",lv:3},
+{w:"consider",ph:"/kənˈsɪdə/",cn:"考虑",ex:"Please consider my idea.",excn:"请考虑我的想法。",lv:3},
+{w:"continue",ph:"/kənˈtɪnjuː/",cn:"继续",ex:"Please continue your work.",excn:"请继续你的工作。",lv:3},
+{w:"decide",ph:"/dɪˈsaɪd/",cn:"决定",ex:"I decided to study hard.",excn:"我决定努力学习。",lv:3},
+{w:"describe",ph:"/dɪˈskraɪb/",cn:"描述",ex:"Can you describe it?",excn:"你能描述一下吗？",lv:3},
+{w:"develop",ph:"/dɪˈveləp/",cn:"发展",ex:"We should develop good habits.",excn:"我们应该养成好习惯。",lv:3},
+{w:"education",ph:"/ˌedʒuˈkeɪʃən/",cn:"教育",ex:"Education is important.",excn:"教育很重要。",lv:3},
+{w:"environment",ph:"/ɪnˈvaɪrənmənt/",cn:"环境",ex:"Protect our environment.",excn:"保护我们的环境。",lv:3},
+{w:"experience",ph:"/ɪkˈspɪəriəns/",cn:"经验/经历",ex:"I have work experience.",excn:"我有工作经验。",lv:3},
+{w:"explain",ph:"/ɪkˈspleɪn/",cn:"解释",ex:"Let me explain it to you.",excn:"让我给你解释一下。",lv:3},
+{w:"express",ph:"/ɪkˈspres/",cn:"表达",ex:"Express your ideas clearly.",excn:"清晰地表达你的想法。",lv:3},
+{w:"improve",ph:"/ɪmˈpruːv/",cn:"改善/提高",ex:"I want to improve my English.",excn:"我想提高我的英语。",lv:3},
+{w:"include",ph:"/ɪnˈkluːd/",cn:"包括",ex:"The price includes tax.",excn:"价格包含税。",lv:3},
+{w:"increase",ph:"/ɪnˈkriːs/",cn:"增加",ex:"The number is increasing.",excn:"数量在增加。",lv:3},
+{w:"instead",ph:"/ɪnˈsted/",cn:"代替/反而",ex:"Let's walk instead.",excn:"我们还是走路吧。",lv:3},
+{w:"knowledge",ph:"/ˈnɒlɪdʒ/",cn:"知识",ex:"Knowledge is power.",excn:"知识就是力量。",lv:3},
+{w:"matter",ph:"/ˈmætə/",cn:"事情/要紧",ex:"What's the matter?",excn:"怎么了？",lv:3},
+{w:"offer",ph:"/ˈɒfə/",cn:"提供",ex:"They offered me a job.",excn:"他们给了我一份工作。",lv:3},
+{w:"opportunity",ph:"/ˌɒpəˈtjuːnəti/",cn:"机会",ex:"This is a good opportunity.",excn:"这是个好机会。",lv:3},
+{w:"possible",ph:"/ˈpɒsəbl/",cn:"可能的",ex:"It's possible to learn fast.",excn:"快速学习是可能的。",lv:3},
+{w:"problem",ph:"/ˈprɒbləm/",cn:"问题",ex:"We can solve this problem.",excn:"我们能解决这个问题。",lv:3},
+{w:"provide",ph:"/prəˈvaɪd/",cn:"提供",ex:"They provide free food.",excn:"他们提供免费食物。",lv:3},
+{w:"realize",ph:"/ˈrɪəlaɪz/",cn:"意识到/实现",ex:"I realize my mistake.",excn:"我意识到了我的错误。",lv:3},
+{w:"reason",ph:"/ˈriːzən/",cn:"原因",ex:"What's the reason?",excn:"原因是什么？",lv:3},
+{w:"remain",ph:"/rɪˈmeɪn/",cn:"保持/留下",ex:"Please remain calm.",excn:"请保持冷静。",lv:3},
+{w:"result",ph:"/rɪˈzʌlt/",cn:"结果",ex:"The result is good.",excn:"结果很好。",lv:3},
+{w:"successful",ph:"/səkˈsesfʊl/",cn:"成功的",ex:"He is a successful man.",excn:"他是个成功的人。",lv:3},
+{w:"suggest",ph:"/səˈdʒest/",cn:"建议",ex:"I suggest you take notes.",excn:"我建议你做笔记。",lv:3},
+{w:"support",ph:"/səˈpɔːt/",cn:"支持",ex:"I support your decision.",excn:"我支持你的决定。",lv:3},
+{w:"whether",ph:"/ˈweðə/",cn:"是否",ex:"I don't know whether to go.",excn:"我不知道是否要去。",lv:3}
+];
+
+const GRAMMAR=[
+{title:"be动词（am/is/are）",
+formula:"主语 + am/is/are + ...",
+rule:"I用am，he/she/it用is，we/you/they用are",
+examples:[
+{en:"I am a student.",cn:"我是一名学生。"},
+{en:"She is a teacher.",cn:"她是一名教师。"},
+{en:"They are my friends.",cn:"他们是我的朋友。"},
+{en:"He is from China.",cn:"他来自中国。"}
+]},
+{title:"人称代词和物主代词",
+formula:"主格：I/you/he/she/it/we/they\n宾格：me/you/him/her/it/us/them\n物主：my/your/his/her/its/our/their",
+rule:"主格做主语，宾格做宾语，物主代词表示\"的\"",
+examples:[
+{en:"I love my family.",cn:"我爱我的家庭。"},
+{en:"He helps me.",cn:"他帮助我。"},
+{en:"This is her book.",cn:"这是她的书。"},
+{en:"We know them.",cn:"我们认识他们。"}
+]},
+{title:"冠词 a/an/the",
+formula:"a + 辅音开头的单数可数名词\nan + 元音开头的单数可数名词\nthe = 这个/那个（特指）",
+rule:"a用于辅音音素开头的词前（如a book），an用于元音音素开头的词前（如an apple）",
+examples:[
+{en:"I have a book.",cn:"我有一本书。"},
+{en:"She eats an apple every day.",cn:"她每天吃一个苹果。"},
+{en:"The sun is bright.",cn:"太阳很亮。"},
+{en:"Open the door, please.",cn:"请开门。"}
+]},
+{title:"名词复数",
+formula:"一般加-s：book → books\n以s/x/sh/ch结尾加-es：bus → buses\n以辅音+y结尾变y为i加-es：city → cities\n以f/fe结尾变f为v加-es：leaf → leaves\n不规则：man→men, woman→women, child→children, foot→feet, tooth→teeth",
+rule:"可数名词变复数有规则变化和不规则变化",
+examples:[
+{en:"I have two books.",cn:"我有两本书。"},
+{en:"There are three buses.",cn:"有三辆公交车。"},
+{en:"Many cities are big.",cn:"很多城市很大。"},
+{en:"Two children are playing.",cn:"两个孩子在玩耍。"}
+]},
+{title:"一般现在时",
+formula:"主语 + 动词原形/三单形式\n第三人称单数：加-s/-es\n否定：don't/doesn't + 动词原形\n疑问：Do/Does + 主语 + 动词原形",
+rule:"表示经常性、习惯性的动作或客观真理。he/she/it后动词加-s",
+examples:[
+{en:"I study English every day.",cn:"我每天学英语。"},
+{en:"She works in a hospital.",cn:"她在医院工作。"},
+{en:"He doesn't like coffee.",cn:"他不喜欢咖啡。"},
+{en:"Do you speak English?",cn:"你说英语吗？"}
+]},
+{title:"一般过去时",
+formula:"主语 + 动词过去式\n规则动词加-ed：work → worked\n以e结尾加-d：live → lived\n否定：didn't + 动词原形\n疑问：Did + 主语 + 动词原形",
+rule:"表示过去发生的动作或状态。规则动词加-ed，不规则动词需记忆",
+examples:[
+{en:"I went to school yesterday.",cn:"我昨天去学校了。"},
+{en:"She worked late last night.",cn:"她昨晚工作到很晚。"},
+{en:"He didn't come to the party.",cn:"他没来参加聚会。"},
+{en:"Did you see the movie?",cn:"你看那部电影了吗？"}
+]},
+{title:"一般将来时",
+formula:"主语 + will + 动词原形\n主语 + am/is/are going to + 动词原形",
+rule:"表示将来要发生的动作或计划",
+examples:[
+{en:"I will study harder.",cn:"我会更努力学习。"},
+{en:"She is going to visit Beijing.",cn:"她打算去北京。"},
+{en:"They will come tomorrow.",cn:"他们明天会来。"},
+{en:"We are going to have a test.",cn:"我们将有一个考试。"}
+]},
+{title:"现在进行时",
+formula:"主语 + am/is/are + 动词-ing\n动词-ing：一般加-ing（reading）\n以e结尾去e加-ing（making）\n重读闭音节双写末尾辅音加-ing（running）",
+rule:"表示现在正在发生的动作",
+examples:[
+{en:"I am reading a book now.",cn:"我正在读书。"},
+{en:"She is making dinner.",cn:"她正在做晚饭。"},
+{en:"They are playing football.",cn:"他们正在踢足球。"},
+{en:"He is running fast.",cn:"他跑得很快。"}
+]},
+{title:"There be 句型",
+formula:"There + is/are + 某物 + 地点\nis接单数，are接复数\n就近原则：靠近be的名词决定用is还是are",
+rule:"表示\"某地有某物\"，注意与have区分（have表示\"拥有\"）",
+examples:[
+{en:"There is a book on the desk.",cn:"桌上有本书。"},
+{en:"There are many students here.",cn:"这里有很多学生。"},
+{en:"There is a pen and two books.",cn:"有一支笔和两本书（就近用is）。"},
+{en:"There are two books and a pen.",cn:"有两本书和一支笔（就近用are）。"}
+]},
+{title:"五大基本句型",
+formula:"1. 主+谓：I work.\n2. 主+谓+宾：I read books.\n3. 主+系+表：She is happy.\n4. 主+谓+间宾+直宾：He gave me a book.\n5. 主+谓+宾+宾补：We call him Tom.",
+rule:"所有英语句子都是这五种基本句型的扩展",
+examples:[
+{en:"I work every day.",cn:"我每天工作。（主+谓）"},
+{en:"I read English books.",cn:"我读英语书。（主+谓+宾）"},
+{en:"She is a good teacher.",cn:"她是个好老师。（主+系+表）"},
+{en:"He gave me a gift.",cn:"他给了我一个礼物。（主+谓+双宾）"},
+{en:"We call him Xiao Wang.",cn:"我们叫他小王。（主+谓+宾+补）"}
+]}
+];
+
+// ========== 状态管理 ==========
+let state={
+    phoneticCat:'all',
+    vocabLevel:1,
+    learned:{
+        phonetics:[],
+        vocab:[],
+        grammar:[]
+    },
+    quizHistory:[],
+    streak:0,
+    lastStudyDate:null
+};
+
+function loadState(){
+    try{
+        const saved=localStorage.getItem('englishStudyState');
+        if(saved){
+            const s=JSON.parse(saved);
+            Object.assign(state,s);
+        }
+    }catch(e){}
+    updateStreak();
+}
+
+function saveState(){
+    try{
+        localStorage.setItem('englishStudyState',JSON.stringify(state));
+    }catch(e){}
+}
+
+function updateStreak(){
+    const today=new Date().toDateString();
+    if(state.lastStudyDate!==today){
+        if(state.lastStudyDate){
+            const last=new Date(state.lastStudyDate);
+            const now=new Date(today);
+            const diff=Math.floor((now-last)/(1000*60*60*24));
+            if(diff===1){
+                state.streak++;
+            }else if(diff>1){
+                state.streak=1;
+            }
+        }else{
+            state.streak=1;
+        }
+        state.lastStudyDate=today;
+        saveState();
+    }
+    const badge=document.getElementById('streakBadge');
+    if(badge)badge.textContent='连续学习 '+state.streak+' 天';
+}
+
+function markStudyActivity(){
+    const today=new Date().toDateString();
+    if(state.lastStudyDate!==today){
+        updateStreak();
+    }
+}
+
+// ========== 发音 ==========
+function speak(text,rate){
+    if('speechSynthesis' in window){
+        speechSynthesis.cancel();
+        const u=new SpeechSynthesisUtterance(text);
+        u.lang='en-US';
+        u.rate=rate||0.8;
+        speechSynthesis.speak(u);
+    }
+}
+
+// ========== 页面切换 ==========
+function goPage(name,el){
+    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+    document.getElementById('page-'+name).classList.add('active');
+    document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+    if(el)el.classList.add('active');
+    window.scrollTo(0,0);
+    markStudyActivity();
+}
+
+// ========== 渲染音标 ==========
+function renderPhonetics(){
+    const grid=document.getElementById('phoneticGrid');
+    grid.innerHTML='';
+    const filtered=PHONETICS.filter(p=>state.phoneticCat==='all'||p.cat===state.phoneticCat);
+    filtered.forEach((p,idx)=>{
+        const globalIdx=PHONETICS.indexOf(p);
+        const isLearned=state.learned.phonetics.includes(globalIdx);
+        const card=document.createElement('div');
+        card.className='phonetic-card'+(isLearned?' learned':'');
+        const catName={mono:'单元音',di:'双元音',voiceless:'清辅音',voiced:'浊辅音'}[p.cat];
+        card.innerHTML=`
+            <div class="phonetic-symbol">${p.sym}</div>
+            <div class="phonetic-example">${p.word}</div>
+            <div class="phonetic-example-cn">${p.cn}</div>
+            <div class="phonetic-tip">${p.tip}</div>
+            <span class="badge badge-${p.cat==='mono'||p.cat==='di'?'vowel':'consonant'}">${catName}</span>
+        `;
+        card.onclick=()=>{
+            speak(p.word);
+            if(!isLearned){
+                state.learned.phonetics.push(globalIdx);
+                saveState();
+                updateProgress();
+                card.classList.add('learned');
+            }
+        };
+        grid.appendChild(card);
+    });
+}
+
+// ========== 渲染词汇 ==========
+function renderVocab(){
+    const list=document.getElementById('vocabList');
+    list.innerHTML='';
+    const filtered=VOCAB.filter(v=>v.lv===state.vocabLevel);
+    filtered.forEach((v,idx)=>{
+        const globalIdx=VOCAB.indexOf(v);
+        const isLearned=state.learned.vocab.includes(globalIdx);
+        const item=document.createElement('div');
+        item.className='vocab-item'+(isLearned?' learned':'');
+        item.innerHTML=`
+            <button class="btn-speak" onclick="speak('${v.w}')">🔊</button>
+            <div class="vocab-word">
+                <div class="en">${v.w} <span class="phonetic">${v.ph}</span></div>
+                <div class="cn">${v.cn}</div>
+                <div class="example">${v.ex}</div>
+                <div class="example" style="color:#999">${v.excn}</div>
+            </div>
+        `;
+        item.onclick=(e)=>{
+            if(e.target.tagName!=='BUTTON'&&!isLearned){
+                state.learned.vocab.push(globalIdx);
+                saveState();
+                updateProgress();
+                item.classList.add('learned');
+            }
+        };
+        list.appendChild(item);
+    });
+}
+
+// ========== 渲染语法 ==========
+function renderGrammar(){
+    const container=document.getElementById('grammarContent');
+    container.innerHTML='';
+    GRAMMAR.forEach((g,idx)=>{
+        const isLearned=state.learned.grammar.includes(idx);
+        const card=document.createElement('div');
+        card.className='card grammar-card'+(isLearned?' learned':'');
+        if(isLearned)card.style.borderLeft='3px solid var(--success)';
+        let examplesHtml='';
+        g.examples.forEach(ex=>{
+            examplesHtml+=`<div class="example">${ex.en}</div><div class="example-cn">${ex.cn}</div>`;
+        });
+        card.innerHTML=`
+            <h3>${idx+1}. ${g.title}</h3>
+            <div class="formula">${g.formula}</div>
+            <p class="tip">${g.rule}</p>
+            ${examplesHtml}
+            <button class="btn btn-outline" style="margin-top:8px" onclick="toggleGrammarLearn(${idx})">${isLearned?'已掌握 ✓':'标记已掌握'}</button>
+        `;
+        container.appendChild(card);
+    });
+}
+
+function toggleGrammarLearn(idx){
+    const i=state.learned.grammar.indexOf(idx);
+    if(i>-1){
+        state.learned.grammar.splice(i,1);
+    }else{
+        state.learned.grammar.push(idx);
+    }
+    saveState();
+    updateProgress();
+    renderGrammar();
+}
+
+// ========== 练习 ==========
+function generateQuizQuestions(type){
+    let questions=[];
+    if(type==='phonetics'||type==='mixed'){
+        // 音标辨析：给单词选音标
+        const pool=[...PHONETICS].sort(()=>Math.random()-0.5).slice(0,5);
+        pool.forEach(p=>{
+            const wrongs=PHONETICS.filter(x=>x.sym!==p.sym).sort(()=>Math.random()-0.5).slice(0,3);
+            const opts=[p,...wrongs].sort(()=>Math.random()-0.5);
+            questions.push({
+                type:'phonetics',
+                q:`单词 "${p.word}"（${p.cn}）的音标是？`,
+                options:opts.map(o=>o.sym),
+                answer:opts.indexOf(p)
+            });
+        });
+    }
+    if(type==='vocab'||type==='mixed'){
+        // 词汇选择：给中文选英文
+        const pool=VOCAB.sort(()=>Math.random()-0.5).slice(0,5);
+        pool.forEach(v=>{
+            const wrongs=VOCAB.filter(x=>x.w!==v.w).sort(()=>Math.random()-0.5).slice(0,3);
+            const opts=[v,...wrongs].sort(()=>Math.random()-0.5);
+            questions.push({
+                type:'vocab',
+                q:`"${v.cn}" 的英文是？`,
+                options:opts.map(o=>o.w),
+                answer:opts.indexOf(v)
+            });
+        });
+    }
+    if(type==='grammar'||type==='mixed'){
+        // 语法选择
+        const gQuestions=[
+            {q:"She ___ a teacher.",opts:["is","am","are","be"],a:0},
+            {q:"I ___ to school yesterday.",opts:["go","went","goes","going"],a:1},
+            {q:"There ___ two books on the desk.",opts:["is","are","am","be"],a:1},
+            {q:"He ___ playing football now.",opts:["is","are","am","do"],a:0},
+            {q:"___ you like English?",opts:["Do","Does","Is","Are"],a:0},
+            {q:"She doesn't ___ coffee.",opts:["likes","like","liked","liking"],a:1},
+            {q:"They ___ come tomorrow.",opts:["will","are","do","have"],a:0},
+            {q:"I have ___ apple.",opts:["a","an","the","/"],a:1},
+            {q:"He gave ___ a book.",opts:["I","me","my","mine"],a:1},
+            {q:"What time ___ it?",opts:["is","am","are","be"],a:0}
+        ].sort(()=>Math.random()-0.5).slice(0,5);
+        gQuestions.forEach(g=>{
+            questions.push({
+                type:'grammar',
+                q:g.q,
+                options:g.opts,
+                answer:g.a
+            });
+        });
+    }
+    return questions.sort(()=>Math.random()-0.5);
+}
+
+let currentQuiz=[];
+
+function startQuiz(type){
+    currentQuiz=generateQuizQuestions(type);
+    if(currentQuiz.length===0){
+        alert('暂无题目');
+        return;
+    }
+    renderQuiz(0,0,[]);
+}
+
+function renderQuiz(qIdx,score,answers){
+    const box=document.getElementById('quizBox');
+    if(qIdx>=currentQuiz.length){
+        // 显示结果
+        box.innerHTML=`
+            <div class="quiz-result">
+                <div class="quiz-score">${score}/${currentQuiz.length}</div>
+                <div class="quiz-score-label">正确率 ${Math.round(score/currentQuiz.length*100)}%</div>
+                <p class="tip" style="margin-top:8px">${score>=8?'太棒了！':score>=6?'不错，继续加油':'多练习，会越来越好的'}</p>
+                <div style="margin-top:16px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
+                    <button class="btn btn-primary" onclick="startQuiz('mixed')">再来一组</button>
+                    <button class="btn btn-outline" onclick="document.getElementById('quizBox').innerHTML='';location.reload()">返回</button>
+                </div>
+            </div>
+        `;
+        // 保存成绩
+        state.quizHistory.push({date:new Date().toLocaleDateString(),score,total:currentQuiz.length});
+        saveState();
+        updateQuizStats();
+        return;
+    }
+    const q=currentQuiz[qIdx];
+    let optsHtml='';
+    q.options.forEach((opt,i)=>{
+        let cls='';
+        if(answers[qIdx]!==undefined){
+            if(i===q.answer)cls='correct';
+            else if(i===answers[qIdx])cls='wrong';
+        }
+        optsHtml+=`<button class="quiz-opt ${cls}" onclick="answerQuiz(${qIdx},${i})" ${answers[qIdx]!==undefined?'disabled':''}>${opt}</button>`;
+    });
+    box.innerHTML=`
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+            <span class="tip">第 ${qIdx+1}/${currentQuiz.length} 题</span>
+            <span class="tip">当前得分 ${score}</span>
+        </div>
+        <div class="quiz-q">${q.q}</div>
+        <div class="quiz-opts">${optsHtml}</div>
+        ${answers[qIdx]!==undefined?`<div style="margin-top:12px;text-align:right"><button class="btn ${qIdx<currentQuiz.length-1?'btn-primary':'btn-success'}" onclick="renderQuiz(${qIdx+1},${answers[qIdx]===q.answer?score+1:score},${JSON.stringify(answers)})">${qIdx<currentQuiz.length-1?'下一题':'查看成绩'}</button></div>`:''}
+    `;
+}
+
+function answerQuiz(qIdx,optIdx){
+    // 通过DOM直接处理
+    const box=document.getElementById('quizBox');
+    const q=currentQuiz[qIdx];
+    const opts=document.querySelectorAll('.quiz-opt');
+    opts.forEach((btn,i)=>{
+        btn.disabled=true;
+        if(i===q.answer)btn.classList.add('correct');
+        else if(i===optIdx)btn.classList.add('wrong');
+    });
+    // 添加下一题按钮
+    const isCorrect=optIdx===q.answer;
+    const div=document.createElement('div');
+    div.style.cssText='margin-top:12px;text-align:right';
+    div.innerHTML=`<button class="btn ${qIdx<currentQuiz.length-1?'btn-primary':'btn-success'}" onclick="nextQuestion(${qIdx},${isCorrect?1:0})">${qIdx<currentQuiz.length-1?'下一题':'查看成绩'}</button>`;
+    box.querySelector('.quiz-opts').appendChild(div);
+    // 如果是词汇题，朗读单词
+    if(q.type==='vocab')speak(q.options[q.answer]);
+}
+
+// 用一个简单的全局变量记录答案
+let quizAnswers=[];
+let quizScore=0;
+
+function nextQuestion(qIdx,correct){
+    if(correct)quizScore++;
+    quizAnswers[qIdx]=true;
+    if(qIdx+1>=currentQuiz.length){
+        showQuizResult();
+    }else{
+        renderQuizNext(qIdx+1);
+    }
+}
+
+function renderQuizNext(qIdx){
+    const box=document.getElementById('quizBox');
+    const q=currentQuiz[qIdx];
+    let optsHtml='';
+    q.options.forEach((opt,i)=>{
+        optsHtml+=`<button class="quiz-opt" onclick="answerQuiz(${qIdx},${i})">${opt}</button>`;
+    });
+    box.innerHTML=`
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+            <span class="tip">第 ${qIdx+1}/${currentQuiz.length} 题</span>
+            <span class="tip">当前得分 ${quizScore}</span>
+        </div>
+        <div class="quiz-q">${q.q}</div>
+        <div class="quiz-opts">${optsHtml}</div>
+    `;
+}
+
+function showQuizResult(){
+    const box=document.getElementById('quizBox');
+    box.innerHTML=`
+        <div class="quiz-result">
+            <div class="quiz-score">${quizScore}/${currentQuiz.length}</div>
+            <div class="quiz-score-label">正确率 ${Math.round(quizScore/currentQuiz.length*100)}%</div>
+            <p class="tip" style="margin-top:8px">${quizScore>=8?'太棒了！':quizScore>=6?'不错，继续加油':'多练习，会越来越好的'}</p>
+            <div style="margin-top:16px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
+                <button class="btn btn-primary" onclick="quizScore=0;quizAnswers=[];startQuiz('mixed')">再来一组</button>
+                <button class="btn btn-outline" onclick="quizScore=0;quizAnswers=[];document.getElementById('quizBox').innerHTML='';showQuizHome()">返回</button>
+            </div>
+        </div>
+    `;
+    state.quizHistory.push({date:new Date().toLocaleDateString(),score:quizScore,total:currentQuiz.length});
+    saveState();
+    updateQuizStats();
+}
+
+function showQuizHome(){
+    document.getElementById('quizBox').innerHTML=`
+        <div style="text-align:center;padding:20px">
+            <p class="tip">选择题型开始练习</p>
+            <div style="display:flex;gap:10px;justify-content:center;margin-top:12px;flex-wrap:wrap">
+                <button class="btn btn-primary" onclick="quizScore=0;quizAnswers=[];startQuiz('phonetics')">音标辨析</button>
+                <button class="btn btn-primary" onclick="quizScore=0;quizAnswers=[];startQuiz('vocab')">词汇选择</button>
+                <button class="btn btn-primary" onclick="quizScore=0;quizAnswers=[];startQuiz('grammar')">语法练习</button>
+                <button class="btn btn-outline" onclick="quizScore=0;quizAnswers=[];startQuiz('mixed')">综合混合</button>
+            </div>
+        </div>
+    `;
+}
+
+function updateQuizStats(){
+    const stats=document.getElementById('quizStats');
+    const text=document.getElementById('quizStatsText');
+    if(state.quizHistory.length===0){
+        stats.style.display='none';
+        return;
+    }
+    stats.style.display='block';
+    const recent=state.quizHistory.slice(-5);
+    let html='';
+    recent.forEach(r=>{
+        const pct=Math.round(r.score/r.total*100);
+        const color=pct>=80?'var(--success)':pct>=60?'var(--warning)':'var(--danger)';
+        html+=`${r.date}：${r.score}/${r.total}（<span style="color:${color};font-weight:600">${pct}%</span>）<br>`;
+    });
+    text.innerHTML=html;
+}
+
+// ========== 进度更新 ==========
+function updateProgress(){
+    const total=PHONETICS.length+VOCAB.length+GRAMMAR.length;
+    const learned=state.learned.phonetics.length+state.learned.vocab.length+state.learned.grammar.length;
+    const pct=Math.round(learned/total*100);
+    document.getElementById('progressFill').style.width=pct+'%';
+    document.getElementById('progressText').textContent=`已学习 ${learned} 项 | ${pct}%`;
+
+    // 更新今日任务
+    const todayTask=document.getElementById('todayTask');
+    if(todayTask){
+        const p=state.learned.phonetics.length;
+        const v=state.learned.vocab.length;
+        const g=state.learned.grammar.length;
+        let tasks=[];
+        if(p<48)tasks.push(`学音标（已学${p}/48）`);
+        if(v<100)tasks.push(`背单词（已学${v}/100）`);
+        if(g<10)tasks.push(`学语法（已学${g}/10）`);
+        if(tasks.length>0){
+            todayTask.innerHTML='今日推荐：'+tasks.join(' · ')+'<br><span style="color:var(--text-light)">点击底部导航开始学习</span>';
+        }else{
+            todayTask.innerHTML='<span style="color:var(--success);font-weight:600">基础内容已全部学完！进入第二阶段：做练习题+开始阅读训练</span>';
+        }
+    }
+}
+
+// ========== 事件绑定 ==========
+document.querySelectorAll('.phonetic-tab').forEach(tab=>{
+    tab.onclick=()=>{
+        document.querySelectorAll('.phonetic-tab').forEach(t=>t.classList.remove('active'));
+        tab.classList.add('active');
+        state.phoneticCat=tab.dataset.cat;
+        renderPhonetics();
+    };
+});
+
+document.querySelectorAll('.vocab-tab').forEach(tab=>{
+    tab.onclick=()=>{
+        document.querySelectorAll('.vocab-tab').forEach(t=>t.classList.remove('active'));
+        tab.classList.add('active');
+        state.vocabLevel=parseInt(tab.dataset.level);
+        renderVocab();
+    };
+});
+
+// 底部导航通过 onclick 直接处理
+
+// ========== 初始化 ==========
+loadState();
+renderPhonetics();
+renderVocab();
+renderGrammar();
+updateProgress();
+updateQuizStats();
+
+// ========== Service Worker（离线缓存） ==========
+if('serviceWorker' in navigator){
+    navigator.serviceWorker.register('service-worker.js')
+        .then(()=>console.log('✓ 离线缓存已启用'))
+        .catch(()=>console.log('离线缓存未启用（本地打开时正常，不影响使用）'));
+}
+</script>
+</body>
+</html>

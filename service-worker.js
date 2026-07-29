@@ -1,9 +1,9 @@
 // Service Worker - 专升本英语学习助手
 // 缓存核心文件，支持离线使用
 
-const CACHE_NAME = 'english-study-v1';
+const CACHE_NAME = 'english-study-v2';
 const FILES_TO_CACHE = [
-  './英语学习助手.html',
+  './index.html',
   './manifest.json',
   './icon-512.png',
   './icon-180.png'
@@ -60,7 +60,7 @@ self.addEventListener('fetch', function(event) {
           if (cachedResponse) return cachedResponse;
           // 如果请求的是页面但缓存中没有，返回主页面
           if (event.request.mode === 'navigate') {
-            return caches.match('./英语学习助手.html');
+            return caches.match('./index.html');
           }
           return new Response('离线模式：此内容暂不可用', {
             status: 503,
